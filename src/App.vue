@@ -4,17 +4,20 @@ import { RouterLink, RouterView } from "vue-router";
 
 <template>
     <header>
-        <div class="wrapper">
-            <nav>
-                <RouterLink to="/">Home</RouterLink>
-                <RouterLink to="/crear">Crear</RouterLink>
-                <RouterLink to="/editar">Editar</RouterLink>
-                <RouterLink to="/listar">Listar</RouterLink>
-            </nav>
-        </div>
+        <nav class="navbar navbar-expand navbar-light bg-light">
+            <div class="nav navbar-nav">
+                <router-link class="nav-item nav-link" to="/">Home</router-link>
+                <router-link class="nav-item nav-link" to="/crear"
+                    >Crear</router-link
+                >
+                <router-link class="nav-item nav-link" to="/listar"
+                    >Listar</router-link
+                >
+            </div>
+        </nav>
     </header>
 
-    <RouterView />
+    <router-view />
 </template>
 
 <style scoped></style>

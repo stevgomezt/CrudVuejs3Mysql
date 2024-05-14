@@ -1,74 +1,46 @@
-<script setup>
-import { ref } from "vue";
-
-const empleados = ref([]);
-
-const consultarEmpleados = async () => {
-    try {
-        const respuesta = await fetch("http://localhost/empleados/");
-        const datosRespuesta = await respuesta.json();
-        console.log(datosRespuesta);
-        empleados.value = []; // Limpia el array de empleados
-        if (typeof datosRespuesta[0].success === "undefined") {
-            empleados.value = datosRespuesta; // Asigna los nuevos datos a empleados
-        }
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-consultarEmpleados();
-
-const borrarEmpleado = (id) => {
-    console.log(id);
-
-    fetch(`http://localhost/empleados/?borrar=${id}`)
-        .then((respuesta) => respuesta.json())
-        .then((datosRespuesta) => {
-            console.log(datosRespuesta);
-            window.location.href = "listar";
-        })
-        .catch(console.log);
-};
-</script>
-
 <template>
     <div class="container">
+        <router-link class="btn btn-success my-1" to="/crear"
+            >Crear Nuevo Empleado</router-link
+        >
         <div class="card">
-            <div class="card-header text-dark">Empleados</div>
+            <div class="card-header">Listar Empleados</div>
             <div class="card-body">
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Id</th>
                             <th>Nombre</th>
-                            <th>Correo</th>
+                            <th>Email</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="empleado in empleados" :key="empleado.id">
-                            <td scope="row">{{ empleado.id }}</td>
+                            <td>{{ empleado.id }}</td>
                             <td>{{ empleado.nombre }}</td>
-                            <td>{{ empleado.correo }}</td>
+                            <td>{{ empleado.email }}</td>
                             <td>
                                 <div
                                     class="btn-group"
                                     role="group"
                                     aria-label=""
                                 >
-                                    <button
-                                        type="button"
-                                        class="btn btn-success mx-1"
+                                    <router-link
+                                        :to="{
+                                            name: 'editar',
+                                            params: { id: empleado.id },
+                                        }"
+                                        class="btn btn-success mr-1"
                                     >
                                         Editar
-                                    </button>
+                                    </router-link>
                                     <button
-                                        type="button"
-                                        class="btn btn-success mx-1"
                                         v-on:click="borrarEmpleado(empleado.id)"
+                                        type="button"
+                                        class="btn btn-success mr-1"
                                     >
-                                        Eliminar
+                                        Borrar
                                     </button>
                                 </div>
                             </td>
@@ -79,5 +51,48 @@ const borrarEmpleado = (id) => {
         </div>
     </div>
 </template>
+
+<script>
+export default {
+    data() {
+        return {
+            empleados: [],
+        };
+    },
+
+    created: function () {
+        this.consultarEmpleados();
+    },
+
+    methods: {
+        consultarEmpleados() {
+            fetch("http://localhost/empleados/")
+                .then((respuesta) => respuesta.json())
+                .then((datosRespuesta) => {
+                    console.log(datosRespuesta);
+                    this.empleados = [];
+                    if (typeof datosRespuesta[0].success === "undefined") {
+                        this.empleados = datosRespuesta;
+                    } else {
+                        // Manejar el caso de respuesta de error
+                        console.error("Error en la respuesta del servidor");
+                    }
+                })
+                .catch(console.error);
+        },
+
+        borrarEmpleado(id) {
+            console.log(id);
+            fetch("http://localhost/empleados/?borrar=" + id)
+                .then((respuesta) => respuesta.json())
+                .then((datosRespuesta) => {
+                    console.log(datosRespuesta);
+                    window.location.href = "listar";
+                })
+                .catch(console.error);
+        },
+    },
+};
+</script>
 
 <style scoped></style>

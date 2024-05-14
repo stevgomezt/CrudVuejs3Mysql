@@ -1,55 +1,96 @@
-<script setup>
-import { ref } from "vue";
+<script>
+export default {
+    data() {
+        return {
+            empleado: {},
+        };
+    },
 
-const empleado = ref({});
+    created: function () {
+        this.obtenerInformacionId();
+    },
+
+    methods: {
+        obtenerInformacionId() {
+            fetch(
+                "http://localhost/empleados/?consultar=" + this.$route.params.id
+            )
+                .then((respuesta) => respuesta.json())
+                .then((datosRespuesta) => {
+                    console.log(datosRespuesta);
+                    this.empleado = datosRespuesta[0];
+                })
+                .catch(console.log);
+        },
+
+        actualizarRegistro() {
+            var datosEnviar = {
+                id: this.$route.params.id,
+                nombre: this.empleado.nombre,
+                email: this.empleado.email,
+            };
+
+            fetch(
+                "http://localhost/empleados/?actualizar=" +
+                    this.$route.params.id,
+                {
+                    method: "POST",
+                    body: JSON.stringify(datosEnviar),
+                }
+            )
+                .then((respuesta) => respuesta.json())
+                .then((datosRespuesta) => {
+                    console.log(datosRespuesta);
+                    window.location.href = "../listar";
+                });
+        },
+    },
+};
 </script>
 
 <template>
     <div class="container">
         <div class="card">
-            <div class="card-header text-dark">Editar Empleado</div>
+            <div class="card-header">Editar Empleados</div>
             <div class="card-body">
                 <form v-on:submit.prevent="actualizarRegistro">
                     <div class="form-group">
-                        <label for="Nombre:"></label>
+                        <label for="nombre">Nombre:</label>
                         <input
                             type="text"
-                            required
                             v-model="empleado.nombre"
                             class="form-control"
                             name="nombre"
                             id="nombre"
                             aria-describedby="helpId"
-                            placeholder="Escribe tu nombre"
+                            placeholder="Escriba su Nombre"
+                            required
                         />
                         <small id="helpId" class="form-text text-muted"
                             >Nombre</small
                         >
                     </div>
-
                     <div class="form-group">
-                        <label for="Email:"></label>
+                        <label for="email">Email:</label>
                         <input
                             type="email"
-                            required
                             v-model="empleado.email"
                             class="form-control"
                             name="email"
                             id="email"
                             aria-describedby="helpId"
-                            placeholder="Escribe tu email"
+                            placeholder="Escriba su email"
+                            required
                         />
                         <small id="helpId" class="form-text text-muted"
-                            >Email</small
+                            >email</small
                         >
                     </div>
                     <div class="btn-group" role="group" aria-label="">
-                        <button type="submit" class="btn btn-success mx-1">
-                            Modificar
+                        <button type="submit" class="btn btn-primary mr-1">
+                            Actualizar
                         </button>
-                        <router-link
-                            :to="{ name: 'listar' }"
-                            class="btn btn-success mx-1"
+                        <router-link to="/listar" class="btn btn-primary mr-1"
                             >Cancelar</router-link
                         >
                     </div>

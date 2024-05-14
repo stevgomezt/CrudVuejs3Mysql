@@ -1,74 +1,78 @@
-<script setup>
-import { ref } from "vue";
+<script>
 
-const empleado = ref({});
+export default {
+    data() {
+        return {
+            empleado: {},
+        };
+    },
 
-const agregarRegistro = () => {
-    console.log(empleado.value);
+    methods: {
+        agregarRegistro() {
+            console.log(this.empleado);
 
-    const datosEnviar = {
-        nombre: empleado.value.nombre,
-        email: empleado.value.email,
-    };
+            var datosEnviar = {
+                nombre: this.empleado.nombre,
+                email: this.empleado.email,
+            };
 
-    fetch("http://localhost/empleados/?insertar=1", {
-        method: "POST",
-        body: JSON.stringify(datosEnviar),
-    })
-        .then((respuesta) => respuesta.json())
-        .then((datosRespuesta) => {
-            console.log(datosRespuesta);
-            window.location.href = "listar";
-        });
+            fetch("http://localhost/empleados/?insertar=1", {
+                method: "POST",
+                body: JSON.stringify(datosEnviar),
+            })
+                .then((respuesta) => respuesta.json())
+                .then((datosRespuesta) => {
+                    console.log(datosRespuesta);
+                    window.location.href = "listar";
+                });
+        },
+    },
 };
 </script>
 
 <template>
     <div class="container">
         <div class="card">
-            <div class="card-header text-dark">Agregar Nuevo Empleado</div>
+            <div class="card-header">Crear Empleados</div>
             <div class="card-body">
                 <form v-on:submit.prevent="agregarRegistro">
                     <div class="form-group">
-                        <label for="Nombre:"></label>
+                        <label for="nombre">Nombre:</label>
                         <input
                             type="text"
-                            required
                             v-model="empleado.nombre"
                             class="form-control"
                             name="nombre"
                             id="nombre"
                             aria-describedby="helpId"
-                            placeholder="Escribe tu nombre"
+                            placeholder="Escriba su Nombre"
+                            required
                         />
                         <small id="helpId" class="form-text text-muted"
                             >Nombre</small
                         >
                     </div>
-
                     <div class="form-group">
-                        <label for="Email:"></label>
+                        <label for="email">Email:</label>
                         <input
                             type="email"
-                            required
                             v-model="empleado.email"
                             class="form-control"
                             name="email"
                             id="email"
                             aria-describedby="helpId"
-                            placeholder="Escribe tu email"
+                            placeholder="Escriba su email"
+                            required
                         />
                         <small id="helpId" class="form-text text-muted"
-                            >Email</small
+                            >email</small
                         >
                     </div>
                     <div class="btn-group" role="group" aria-label="">
-                        <button type="submit" class="btn btn-success mx-1">
+                        <button type="submit" class="btn btn-primary mr-1">
                             Agregar
                         </button>
-                        <router-link
-                            :to="{ name: 'listar' }"
-                            class="btn btn-success mx-1"
+                        <router-link to="/listar" class="btn btn-primary mr-1"
                             >Cancelar</router-link
                         >
                     </div>
@@ -77,3 +81,5 @@ const agregarRegistro = () => {
         </div>
     </div>
 </template>
+
+<style scoped></style>
